@@ -20,8 +20,8 @@ my_posts = [
 
 def find_post(id):
     for p in my_posts:
-        if p["id"] == id
-        return p
+        if p["id"] == id:
+            return p
 
 @app.get("/")
 def root():
