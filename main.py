@@ -20,7 +20,7 @@ my_posts = [
 
 def find_post(id):
     for p in my_posts:
-        if p["id"] == id:
+        if p['id'] == id:
             return p
 
 @app.get("/")
@@ -40,7 +40,8 @@ def create_posts(post: Post):
 
 @app.get("/posts/{id}")
 def get_post(id):
-    post = find_post(id)
+    
+    post = find_post(int(id))
     return {"post_detail" : post}
 
 # title string, content str
