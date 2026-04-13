@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import FastAPI
 from fastapi.params import Body
 from pydantic import BaseModel
@@ -8,6 +10,7 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True
+    rating: Optional[int] = None
 
 @app.get("/")
 def root():
@@ -18,8 +21,9 @@ def get_posts():
     return {"data":"Your posts"}
 
 @app.post("/createposts")
-def create_posts(new_post: Post):
-    print(new_post)
-    return{"data":"new post"}
+def create_posts(post: Post):
+    print(post)
+    print(post.model_dump())
+    return{"data": post}
 
 # title string, content str
