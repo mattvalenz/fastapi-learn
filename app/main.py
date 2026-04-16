@@ -55,17 +55,22 @@ def get_posts():
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: Post):
-    cursor.execute(""" INSERT INTO posts (title,content,published) VALUES (%s, %s, %s) RETURNING * """, (posts.title, posts.content, posts.published))
+    cursor.execute(""" INSERT INTO posts (title,content,published) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
     new_post = cursor.fetchone()
+    
+    conn.commit()
    
     return{"data": new_post}
 
 @app.get("/posts/{id}")
 def get_post(id: int, response: Response):
+    cursor.execute(""" SELECT * FROM posts WHERE id = %s""", (str(id),))
+    post = cursor.fetchone()
     
-    post = find_post(id)
-    raise HTTPException(status_code= status.HTTP_404_NOT_FOUND, 
+    if not post:
+        raise HTTPException(status_code= status.HTTP_404_NOT_FOUND, 
                         detail= f"post with id: {id} was not found")
+        
     # below code is sloppier, above code is concise and commonly used
     # if not post: 
     #     response.status_code = status.HTTP_404_NOT_FOUND
