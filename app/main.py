@@ -6,6 +6,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from pydantic import BaseModel
 from random import randrange
+import time
 
 app = FastAPI()
 
@@ -13,16 +14,19 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True
-    
 
-try:
-    conn = psycopg2.connect(host = 'localhost', database='fastapi', user='postgres', password='123456', cursor_factory=RealDictCursor)
-    cursor = conn.cursor()
-    print("Database successfully connected.")
-except Exception as error:
-    print("Connecting failed")
-    print("Error:", error)
+while True:
 
+    try:
+        conn = psycopg2.connect(host = 'localhost', database='fastapi', user='postgres', password='123456', cursor_factory=RealDictCursor)
+        cursor = conn.cursor()
+        print("Database successfully connected.")
+        break
+    except Exception as error:
+        print("Connecting failed")
+        print("Error:", error)
+        time.sleep(2)
+        
 my_posts = [
     {"title": "title of post 1", "content": "content of post 1", "id" : 1},
     {"title": "favorite food", "content": "chilli con carne", "id" : 2},
@@ -45,14 +49,16 @@ def root():
 
 @app.get("/posts")
 def get_posts():
-    return {"data": my_posts}
+    cursor.execute(""" SELECT * FROM posts""")
+    posts = cursor.fetchall()
+    return {"data": posts}
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: Post):
-    post_dict = post.model_dump()
-    post_dict['id'] = randrange(0,100000)
-    my_posts.append(post_dict)
-    return{"data": post_dict}
+    cursor.execute(""" INSERT INTO posts (title,content,published) VALUES (%s, %s, %s) RETURNING * """, (posts.title, posts.content, posts.published))
+    new_post = cursor.fetchone()
+   
+    return{"data": new_post}
 
 @app.get("/posts/{id}")
 def get_post(id: int, response: Response):
