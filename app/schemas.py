@@ -10,4 +10,13 @@ class PostCreate(PostBase):
     pass
 
 
+
+#response classes
+
+class Post(BaseModel):
+    title: str
+    content: str
+    published: bool
     
+    class Config:
+        from_attributes = True

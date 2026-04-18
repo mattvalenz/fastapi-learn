@@ -63,9 +63,9 @@ def get_posts(db:Session= Depends(get_db)):
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
     
-    return{"data": posts}
+    return posts
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute(""" INSERT INTO posts (title,content,published) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
     # new_post = cursor.fetchone()
@@ -77,7 +77,7 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_post)
     
-    return{"data": new_post}
+    return new_post
 
 @app.get("/posts/{id}")
 def get_post(id: int, db: Session = Depends(get_db)):
@@ -134,4 +134,4 @@ def update_post(id: int, post: schemas.PostCreate, db: Session = Depends(get_db)
     
     db.commit()
    
-    return {'data': post_query.first()}
+    return post_query.first()
