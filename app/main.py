@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from . import models,schemas
 from .database import engine
 from .database import get_db
-from .schemas import Post
+from .schemas import PostCreate, PostBase
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -52,13 +52,6 @@ def find_index_post(id):
         if p['id'] == id:
             return i
 
-#test route
-@app.get("/sqlalchemy")
-def test_posts(db: Session = Depends(get_db)):
-    
-    posts = db.query(models.Post).all()
-    
-    return{"data": posts}
 
 @app.get("/")
 def root():
@@ -73,7 +66,7 @@ def get_posts(db:Session= Depends(get_db)):
     return{"data": posts}
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post, db: Session = Depends(get_db)):
+def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute(""" INSERT INTO posts (title,content,published) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
     # new_post = cursor.fetchone()
     
@@ -124,7 +117,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.put("/posts/{id}")
-def update_post(id: int, post: Post, db: Session = Depends(get_db)):
+def update_post(id: int, post: schemas.PostCreate, db: Session = Depends(get_db)):
     
     post_query = db.query(models.Post).filter(models.Post.id == id)
     
