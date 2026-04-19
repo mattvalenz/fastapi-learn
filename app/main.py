@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
@@ -57,7 +57,7 @@ def find_index_post(id):
 def root():
     return {"message": "api check"}
 
-@app.get("/posts")
+@app.get("/posts", response_model=list[schemas.Post])
 def get_posts(db:Session= Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts""")
     # posts = cursor.fetchall()
@@ -79,7 +79,7 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     
     return new_post
 
-@app.get("/posts/{id}")
+@app.get("/posts/{id}", response_model=schemas.Post)
 def get_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts WHERE id = %s""", (str(id),))
     # post = cursor.fetchone()
@@ -91,7 +91,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code= status.HTTP_404_NOT_FOUND, 
                         detail= f"post with id: {id} was not found")
      
-    return {"post_detail" : post}   
+    return post
     # below code is sloppier, above code is concise and commonly used
     # if not post: 
     #     response.status_code = status.HTTP_404_NOT_FOUND
@@ -116,7 +116,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@app.put("/posts/{id}")
+@app.put("/posts/{id}", response_model=schemas.Post)
 def update_post(id: int, post: schemas.PostCreate, db: Session = Depends(get_db)):
     
     post_query = db.query(models.Post).filter(models.Post.id == id)
