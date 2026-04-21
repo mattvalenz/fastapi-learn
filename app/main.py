@@ -12,6 +12,7 @@ from . import models,schemas, utils
 from .database import engine
 from .database import get_db
 from .schemas import PostCreate, PostBase, UserCreate
+from .routers import post, user
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -47,6 +48,13 @@ def find_index_post(id):
     for i, p in enumerate(my_posts):
         if p['id'] == id:
             return i
+        
 
+app.include_router(post.router)
+app.include_router(user.router)
+
+@app.get("/")
+def root():
+    return {"message": "api check"}
 
     
