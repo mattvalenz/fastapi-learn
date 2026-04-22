@@ -19,6 +19,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     
+    print(user.password)
     return new_user
 
 
