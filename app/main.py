@@ -21,17 +21,7 @@ app = FastAPI()
     
     
 
-while True:
 
-    try:
-        conn = psycopg2.connect(host = 'localhost', database='fastapi', user='postgres', password='123456', cursor_factory=RealDictCursor)
-        cursor = conn.cursor()
-        print("Database successfully connected.")
-        break
-    except Exception as error:
-        print("Connecting failed")
-        print("Error:", error)
-        time.sleep(2)
         
 my_posts = [
     {"title": "title of post 1", "content": "content of post 1", "id" : 1},
