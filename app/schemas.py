@@ -1,8 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Annotated, Optional
 
-from pydantic import BaseModel, EmailStr
-    
+from pydantic import BaseModel, EmailStr, Field
+
+
 
 class PostBase(BaseModel):
     title: str
@@ -48,3 +49,8 @@ class Token(BaseModel):
     
 class TokenData(BaseModel):
     id: Optional[int] = None
+    
+class Vote(BaseModel):
+    post_id: int
+    dir: Annotated[int, Field(ge=0, le=1)]
+    #Annotated with this logic only allows 0 or 1

@@ -33,7 +33,6 @@ class User(Base):
 
 class Vote(Base):
     __tablename__ = "votes"
-    id = Column(Integer, nullable=False, unique=True)
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
